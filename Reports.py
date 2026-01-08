@@ -5,7 +5,7 @@ import plotly.express as px
 import pandas as pd
 
 
-st.set_page_config(page_title="Patio 2025", layout="wide")
+st.set_page_config(page_title="CC analysis", layout="wide")
 st.sidebar.header("Analyses")
 
 
@@ -13,7 +13,7 @@ st.sidebar.header("Analyses")
 
 # df_grp = df = pd.read_csv("data/patio_2025_monthly.csv", encoding="utf-8")
 
-st.title("Analyse Patio 2025")
+st.title("Contract catering annual report")
 
 
 
