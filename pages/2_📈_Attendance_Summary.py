@@ -2,13 +2,13 @@ import streamlit as st
 # from src.data import load_data, build_monthly
 from src.filters import sidebar_filters
 from src.charts import ca_month_chart, ca_freq_chart
-from src.common import mois_fr
+from src.common import mois_fr, COLUMN_RENAME_MAP, month_en, format_euro
 import pandas as pd
 import io
 
-st.title("Statistiques de frequentation")
+st.title("Attendance Summary")
 
-df_grp = pd.read_csv("data/patio_2025_monthly.csv", encoding="utf-8")
+df_grp = pd.read_csv("data/fake_checkout_reports.csv", encoding="utf-8")
 print(df_grp.head())
 sel_clients = sidebar_filters(df_grp)
 
@@ -29,29 +29,32 @@ c1, c2, c3 = st.columns(3)
 
 
 # display metrics
-c1.metric("Couverts", f"{total_cvts:,}".replace(",", " "))
-c2.metric("CA admission HT", f"{total_ca_adm:,.2f} €".replace(",", " "))
-c3.metric("CA alim HT", f"{total_ca_alim:,.2f} €".replace(",", " "))
+c1.metric("Guest Count", f"{total_cvts:,}".replace(",", " "))
+c2.metric("Adm Revenue excl. VAT", format_euro(total_ca_adm))
+c3.metric("Food Revenue excl. VAT", format_euro(total_ca_alim))
 
 
 buffer = io.BytesIO()
 with pd.ExcelWriter(buffer, engine="xlsxwriter") as writer:
     df_view.to_excel(writer, index=False)
+    
 
 st.download_button(
-    "📥 Télécharger Excel",
+    "📥 Download Excel",
     data=buffer.getvalue(),
     file_name="analyse_2025.xlsx",
     mime="application/vnd.ms-excel"
 )
 
-st.plotly_chart(ca_freq_chart(df_view, mois_fr))
+st.plotly_chart(ca_freq_chart(df_view, month_en))
 
+df_view = df_view.rename(columns=COLUMN_RENAME_MAP)
+df_view.drop(columns=["month_id"], axis=1, inplace=True)
 # render df 
 st.dataframe(df_view.style.format({
-        "nb_cvts": "{:,.0f}",
-        "ca_adm_ht": "{:,.2f} €",
-        "ca_alim_ht": "{:,.2f} €",
+        "guest_count": "{:,.0f}",
+        "adm_revenue_excl.VAT": "{:,.2f} €",
+        "food_revenue_excl.VAT": "{:,.2f} €",
     }), width="stretch")
 
 

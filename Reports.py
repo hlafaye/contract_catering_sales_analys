@@ -11,7 +11,7 @@ st.sidebar.header("Analyses")
 
 
 
-df_grp = df = pd.read_csv("data/patio_2025_monthly.csv", encoding="utf-8")
+# df_grp = df = pd.read_csv("data/patio_2025_monthly.csv", encoding="utf-8")
 
 st.title("Analyse Patio 2025")
 
